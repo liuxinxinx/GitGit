@@ -1,0 +1,40 @@
+import requests
+import base64
+import cv2
+import time
+
+time1=time.time()
+
+http_url = 'https://api-cn.faceplusplus.com/facepp/v3/search'
+key = "JTvxj9Gckc6IkKZ5Ph8UP3DPfYfA6NcN"
+secret = "v7e6pqqY4IKu10nOkSfKBIJdHFkbEjLL"
+
+filepath = r"nowtime.jpg"
+
+def detect_face(filepath):#传入图片文件
+    http_url ="https://api-cn.faceplusplus.com/facepp/v3/detect"
+    files = {"image_file": open(filepath, "rb")}
+    data = {"api_key":key, "api_secret": secret}
+    response = requests.post(http_url, data=data, files=files)
+    req_dict = response.json()
+    print(req_dict)
+    return req_dict
+
+result=detect_face(filepath)
+faces=result["faces"]
+
+img=cv2.imread(filepath)
+
+time2=time.time()
+print(time2-time1)
+for fa in faces:
+    rect=fa["face_rectangle"]
+
+    width=rect["width"]
+    top=rect["top"]
+    left=rect["left"]
+    height=rect["height"]
+
+    cv2.rectangle(img,(left,top),(left+width,top+height),(0,255,0),2)
+
+cv2.imshow("asda",img)
